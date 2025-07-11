@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  username  String      @unique
+  email     String      @unique
+  password  String
+  thread    Thread[]
+  profile   Profile?
+  like      Like[]
+  following Following[] @relation("UserFollower")
+  follower  Following[] @relation("UserFollowing")
+}
+
+model Thread {
+  id          String   @id @default(uuid())
+  description String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+
+  like Like[]
+
+  // relation untuk reply
+  parentThreadId String? // ID dari thread yang dibalas
+  parentThread   Thread?  @relation("ThreadReplies", fields: [parentThreadId], references: [id], onDelete: Cascade) //objek thread yang dibalas (bisa kamu panggil di backend).
+  replies        Thread[] @relation("ThreadReplies") //daftar balasan untuk thread ini.
+
+  likeCount  Int @default(0)
+  replyCount Int @default(0)
+}
+
+model Profile {
+  id       String  @id @default(uuid())
+  fullname String?
+  avatar   String?
+  banner   String?
+  bio      String?
+  user     User?   @relation(fields: [userId], references: [id])
+  userId   String? @unique
+}
+
+model Like {
+  id String @id @default(uuid())
+
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  Thread   Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([userId, threadId])
+  @@map("likes")
+}
+
+model Following {
+  id String @id @default(uuid())
+
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id])
+  followingId String
+  follower    User     @relation("UserFollower", fields: [followerId], references: [id])
+  followerId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@unique([followerId, followingId])
+  @@map("following")
+}

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Thread" ADD COLUMN     "likeCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "replyCount" INTEGER NOT NULL DEFAULT 0;
