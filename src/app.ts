@@ -17,12 +17,11 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(corsMiddleware)
-
-// app.use(express.json())
-
 app.use(express.json({ limit: '10mb' }));
 
-
+app.get('/', (req, res) => {
+  res.send('Backend Succes Deploy!');
+});
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api", 
    userRouter, threadRouter, profileRouter, friendRouter, replayRouter, followRouter, likeRouter);
