@@ -21,7 +21,9 @@ threadRouter.get('/threadbi', authMiddleware, getThreadByIdUserController)
 
 threadRouter.get('/thread/:id', authMiddleware, getThreadByIdThreadController)
 
-threadRouter.post('/thread',  authMiddleware, upload.single("image"), createThreedController)
+// threadRouter.post('/thread',  authMiddleware, upload.single("image"), createThreedController)
+
+threadRouter.post('/thread',  authMiddleware, createThreedController)
 
 threadRouter.patch('/thread/:id', authMiddleware, editThreadByIdController)
 
