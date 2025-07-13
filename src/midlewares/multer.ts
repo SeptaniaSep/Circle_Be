@@ -32,16 +32,19 @@ import { Request, Response, NextFunction } from "express";
 //   // ❌ fileSize global dihapus → supaya bisa custom per field
 // });
 
-const storage = multer.diskStorage({
-  destination: function (_req, _file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (_req, file, cb) {
-    const ext = path.extname(file.originalname);
-    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-    cb(null, uniqueName);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (_req, _file, cb) {
+//     cb(null, "uploads/");
+//   },
+//   filename: function (_req, file, cb) {
+//     const ext = path.extname(file.originalname);
+//     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+//     cb(null, uniqueName);
+//   },
+// });
+
+
+const storage = multer.memoryStorage();
 
 // filter jenis file
 const fileFilter = (_req: any, file: Express.Multer.File, cb: any) => {
