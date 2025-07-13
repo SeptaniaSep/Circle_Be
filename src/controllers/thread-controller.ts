@@ -14,7 +14,7 @@ export async function createThreedController(req: Request, res: Response) {
     }
 
     let imageUrl: string | null = null;
-
+    
     const filePath = req.file?.path;
     if (filePath) {
       const result = await cloudinary.uploader.upload(filePath, {
@@ -60,7 +60,7 @@ export async function getAllThreadController(req: Request, res: Response) {
     res.status(401).json({ message: "Unauthorized" });
       return 
     }
-    const threads = await GetAllThread();
+    const threads = await GetAllThread(userId);
 
     res.status(200).json({
       message: "All threads by user",
