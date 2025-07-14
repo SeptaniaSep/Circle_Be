@@ -78,9 +78,6 @@ export const getReplyThread = async (req: Request, res: Response, next: NextFunc
 };
 
 
-// EDIT REPLY
-
-
 // DELETE REPLYNYA AJA
 export const deleteReplyByIdController = async (
   req: Request,
@@ -100,7 +97,7 @@ export const deleteReplyByIdController = async (
       where: {
         id: replyId,
         authorId: userId,
-        parentThreadId: { not: null }, // hanya reply
+        parentThreadId: { not: null }, 
       },
     });
 

@@ -1,7 +1,6 @@
 import { GetProfile, profile, UpdateProfile } from "../services/profile-service";
 import { Request, Response } from "express";
-import cloudinary from "../utils/cloudinary";
-import fs from "fs";
+import { uploadBufferToCloudinary } from "../midlewares/buffer";
 
 export async function getProfileController(req: Request, res: Response) {
   try {
@@ -49,20 +48,16 @@ export async function updateProfileController(req: Request, res: Response) {
       bio: req.body.bio,
     };
 
+     
     if (avatarFile) {
-      const result = await cloudinary.uploader.upload(avatarFile.path, {
-        folder: "avatar", 
-      });
+      const result: any = await uploadBufferToCloudinary("avatar",avatarFile.buffer, Date.now().toString());
       dataToUpdate.avatar = result.secure_url;
-      fs.unlinkSync(avatarFile.path);
     }
 
+      
     if (bannerFile) {
-      const result = await cloudinary.uploader.upload(bannerFile.path, {
-        folder: "banner",
-      });
+      const result: any = await uploadBufferToCloudinary("banner",bannerFile.buffer, Date.now().toString());
       dataToUpdate.banner = result.secure_url;
-      fs.unlinkSync(bannerFile.path);
     }
 
     const updatedProfile = await UpdateProfile(dataToUpdate);

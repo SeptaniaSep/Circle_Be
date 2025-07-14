@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { ThreedSchema } from "../validation/thraed-validation";
 import { CreateThreed, EditByIdThread, GetAllThread, GetByIdThread, GetByIdUser} from "../services/thread-service";
 import { prisma } from "../connections/prismaClien";
-import cloudinary from "../utils/cloudinary";
-import { Readable } from "stream";
+import { uploadBufferToCloudinary } from "../midlewares/buffer";
+
+
 
 // CREATE THREAD 
 export async function createThreedController(req: Request, res: Response) {
@@ -24,11 +25,11 @@ export async function createThreedController(req: Request, res: Response) {
     //   imageUrl = result.secure_url;
     // }
 
-const file = req.file;
-if (file) {
-  const result: any = await uploadBufferToCloudinary(file.buffer, Date.now().toString());
-  imageUrl = result.secure_url;
-}
+    const file = req.file;
+    if (file) {
+      const result: any = await uploadBufferToCloudinary("my-app-images",file.buffer, Date.now().toString());
+      imageUrl = result.secure_url;
+    }
 
 
     await ThreedSchema.validateAsync({
@@ -202,23 +203,6 @@ export const deleteThreadByIdController = async (
 };
 
 
-// helper upload dari buffer (tidak perlu path)
-function uploadBufferToCloudinary(buffer: Buffer, filename: string) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: "my-app-images",
-        public_id: filename,
-      },
-      (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      }
-    );
-
-    Readable.from(buffer).pipe(stream);
-  });
-}
 
 
 

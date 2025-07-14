@@ -8,8 +8,6 @@ replayRouter.post("/threads/:parentId/reply", authMiddleware, createReplyThread)
 
 replayRouter.get("/threads/:parentId/reply", getReplyThread);
 
-// edit 
-
 replayRouter.delete("/reply/:id", authMiddleware, deleteReplyByIdController);
 
 export default replayRouter;

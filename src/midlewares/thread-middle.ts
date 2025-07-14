@@ -6,6 +6,7 @@ export async function authMiddleware(
   res: Response,
   next: NextFunction
 ): Promise<void> {
+ 
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1];
  

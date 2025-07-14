@@ -11,6 +11,7 @@ export async function createLikeService(data: LikesDto) {
         threadId: data.threadId,
       },
     });
+console.log("CREATE LIKE SERVICE: userId =", data.userId, "threadId =", data.threadId);
 
     let liked = true;
 
@@ -28,18 +29,11 @@ export async function createLikeService(data: LikesDto) {
     });
 
     return {
-      liked,
+      liked, 
       likesCount,
       threadId: data.threadId,
     };
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      throw {
-        statusCode: 400,
-        message: `Prisma error: ${error.message}`,
-      };
-    }
-
     throw {
       statusCode: 500,
       message: "Terjadi kesalahan saat like/unlike thread",
@@ -146,6 +140,24 @@ export async function totalLikeUsers(userId: string) {
     throw {
       statusCode: 500,
       message: "Gagal menghitung total like pada semua thread user",
+      error,
+    };
+  }
+}
+
+export async function getTotalLikesByThreadId(threadId: string) {
+  try {
+    const total = await prisma.like.count({
+      where: {
+        threadId,
+      },
+    });
+
+    return { threadId, total };
+  } catch (error) {
+    throw {
+      statusCode: 500,
+      message: "Gagal menghitung like untuk thread ini",
       error,
     };
   }

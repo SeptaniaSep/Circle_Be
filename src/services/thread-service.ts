@@ -7,6 +7,7 @@ interface thread {
     authorId: string ,
 }
 
+
 export async function CreateThreed(data: thread) {
     const thread = await prisma.thread.create({
         data: { 
@@ -22,37 +23,49 @@ export async function CreateThreed(data: thread) {
     }
 }
 
-export async function GetAllThread(){
-    return await prisma.thread.findMany({ 
 
-      where: {
+export async function GetAllThread(userId: string) {
+  const threads = await prisma.thread.findMany({
+    where: {
       parentThreadId: null,
-      },
-
-        orderBy: {
-            createdAt: "desc",
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      description: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+      replyCount: true,
+      like: {
+        select: {
+          userId: true,
         },
-
-        
-        include:{
-            author:{
-                select:{
-                    id: true,
-                    username: true,
-                    profile: {
-                        select: {
-                            avatar: true,
-                            fullname: true,
-                        }
-                    }
-
-                },
+      },
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profile: {
+            select: {
+              avatar: true,
+              fullname: true,
             },
-            
-        }
-        
-    })
+          },
+        },
+      },
+    },
+  });
+
+  return threads.map((thread) => ({
+    ...thread,
+    likesCount: thread.like.length,
+    isLikedUser: thread.like.some((like) => like.userId === userId),
+  }));
 }
+
 
 
 export async function GetByIdUser(authorId:string){
