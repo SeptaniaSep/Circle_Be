@@ -56,6 +56,11 @@ export async function GetAllThread(userId: string) {
           },
         },
       },
+        _count: {
+        select: {
+          replies: true,
+        },
+      },
     },
   });
 
@@ -96,6 +101,12 @@ export async function GetByIdUser(authorId:string){
 
                 },
             },
+             _count: {
+        select: {
+          replies: true,
+          like: true, 
+        },
+      },
             
         }
         
@@ -139,6 +150,11 @@ export async function GetByIdThread(threadId: string) {
           createdAt: "asc",
         },
       },
+       _count: {
+        select: {
+          replies: true,
+        },
+      },
     },
   });
 }
@@ -174,7 +190,6 @@ export async function EditByIdThread(
 
 
 export async function deleteThreadById(id: string, userId: string) {
-  // Pastikan thread milik user yang sedang login
   const existing = await prisma.thread.findFirst({
     where: {
       id,
