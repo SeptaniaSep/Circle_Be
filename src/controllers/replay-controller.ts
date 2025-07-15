@@ -90,19 +90,23 @@ export const deleteReplyByIdController = async (
 
     if (!replyId) {
       res.status(400).json({ message: "Reply ID tidak ditemukan" });
-      return 
+      return;
     }
 
-    const existing = await prisma.thread.findFirst({
-      where: {
-        id: replyId,
-        authorId: userId,
-        parentThreadId: { not: null }, 
-      },
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized: User ID tidak ditemukan" });
+      return;
+    }
+
+    const reply = await prisma.thread.findUnique({
+      where: { id: replyId },
     });
 
-    if (!existing) {
-      res.status(404).json({ message: "Reply tidak ditemukan atau bukan milikmu" });
+    // Pastikan reply ada, milik user yang login, dan merupakan reply (punya parent)
+    if (!reply || reply.authorId !== userId || !reply.parentThreadId) {
+      res.status(403).json({
+        message: "Reply tidak ditemukan, bukan milikmu, atau bukan sebuah reply",
+      });
       return;
     }
 
